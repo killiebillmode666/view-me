@@ -27,6 +27,6 @@ def increase_viewers(stream_url, api_url):
         time.sleep(random.randint(10, 60))  # Simulate random viewer activity.
 
 if __name__ == "__main__":
-    stream_url = "your_stream_url_here"
-    api_url = "https://api.streaming-platform.com/viewer_count"  # Replace with the actual API endpoint.
+    stream_url = "https://chaturbate.com/badbiboy666/"
+    api_url = "https://viewerbot.webcam/api"  # Replace with the actual API endpoint.
     increase_viewers(stream_url, api_url)
