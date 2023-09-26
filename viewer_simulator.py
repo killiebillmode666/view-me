@@ -1,32 +1,48 @@
 import random
 import time
-import requests  # Import the requests library for HTTP requests.
+import requests
 
-# Function to update viewer count via the streaming platform's API.
-def update_viewer_count(api_url):
+# Function to read a list of proxies from a text file.
+def read_proxies(file_path):
     try:
-        response = requests.get(api_url)
-        if response.status_code == 200:
-            viewer_data = response.json()
-            return viewer_data['viewer_count']
-        else:
-            print(f"Failed to fetch viewer count. Status code: {response.status_code}")
+        with open(file_path, 'r') as file:
+            proxies = file.read().splitlines()
+        return proxies
     except Exception as e:
-        print(f"Error updating viewer count: {str(e)}")
+        print(f"Error reading proxies from file: {str(e)}")
+        return []
 
-def increase_viewers(stream_url, api_url):
+# Function to select a random proxy from the list.
+def get_random_proxy(proxies):
+    return random.choice(proxies)
+
+def increase_viewers(stream_url, proxies_file_path):
+    proxies = read_proxies(proxies_file_path)
+    if not proxies:
+        print("No proxies found in the file. Exiting.")
+        return
+
     while True:
         fake_viewers = random.randint(1, 10)  # Simulate viewers joining your stream.
         print(f"New viewers joined: {fake_viewers}")
-        
-        # Update viewer count via the streaming platform's API.
-        viewer_count = update_viewer_count(api_url)
-        if viewer_count is not None:
-            print(f"Current viewer count: {viewer_count}")
-        
+
+        # Select a random proxy from the list.
+        proxy = get_random_proxy(proxies)
+        print(f"Using proxy: {proxy}")
+
+        # Use the selected proxy for the request.
+        try:
+            response = requests.get(stream_url, proxies={'http': proxy, 'https': proxy})
+            if response.status_code == 200:
+                print("Request succeeded.")
+            else:
+                print(f"Request failed. Status code: {response.status_code}")
+        except Exception as e:
+            print(f"Error making request with proxy: {str(e)}")
+
         time.sleep(random.randint(10, 60))  # Simulate random viewer activity.
 
 if __name__ == "__main__":
     stream_url = "https://chaturbate.com/badbiboy666/"
-    api_url = "https://viewerbot.webcam/api"  # Replace with the actual API endpoint.
-    increase_viewers(stream_url, api_url)
+    proxies_file_path = "proxies.txt"
+    increase_viewers(stream_url, proxies_file_path)
